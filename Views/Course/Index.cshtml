@@ -1,0 +1,65 @@
+﻿@model IEnumerable<CourseEnrollmentApp.Models.Course>
+@using CourseEnrollmentApp.Extensions
+
+@{
+    ViewData["Title"] = "Available Courses";
+
+    // Fallback updated to Ridhdhi
+    string studentName = ViewBag.StudentName as string ?? "Ridhdhi";
+    string selectedCourse = ViewBag.SelectedCourse as string ?? "None";
+}
+
+<div class="container mt-4">
+    <h2>Available Courses</h2>
+
+    <div class="alert alert-info">
+        <strong>Cookie (Student Name):</strong> @studentName <br />
+        <strong>Session (Last Selected Course):</strong> @selectedCourse
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Course Name</th>
+                <th>Duration</th>
+                <th>Original Fees</th>
+                <th>Discount</th>
+                <th>Final Fees</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var course in Model)
+                {
+                    <tr>
+                        <td>@course.CourseId</td>
+                        <td>@course.CourseName</td>
+                        <td>@course.Duration</td>
+                        <td>$@course.Fees</td>
+                        <td>@course.DiscountPercentage%</td>
+                        <td><strong>$@course.CalculateFinalFees()</strong></td>
+                        <td>
+                            <a asp-action="Details" asp-route-courseId="@course.CourseId" class="btn btn-primary btn-sm">View Details</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center text-muted">No courses available in cache.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="Users" class="btn btn-secondary mt-2">View User Directory (Async Request)</a>
+</div>
